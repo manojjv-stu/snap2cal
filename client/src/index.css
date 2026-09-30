@@ -1,0 +1,13 @@
+@import "tailwindcss";
+body{font-family:Inter,system-ui,sans-serif;background:#faf9f7;color:#1c1917}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes slide{0%{margin-left:-33%}100%{margin-left:100%}}
+@keyframes floaty{0%,100%{transform:translateY(0) translateZ(40px) rotateY(var(--ry))}50%{transform:translateY(-14px) translateZ(40px) rotateY(var(--ry))}}
+@keyframes blob{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(50px,36px) scale(1.15)}}
+@keyframes scan{0%{top:0}100%{top:calc(100% - 3px)}}
+@keyframes shine{to{background-position:200% 0}}
+.grad{background:linear-gradient(90deg,#4f46e5,#db2777,#f59e0b,#4f46e5);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+.scan{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#6366f1,transparent);box-shadow:0 0 20px 6px #6366f1aa;animation:scan 1.6s ease-in-out infinite alternate}
+.float3d{animation:floaty 5s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

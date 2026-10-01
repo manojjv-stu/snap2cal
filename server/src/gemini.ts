@@ -14,12 +14,14 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export async function extractEvent(buf: Buffer, mimeType: string): Promise<EventData> {
   if (process.env.DEMO_MODE === "true") return DEMO;
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY, httpOptions: { timeout: Number(process.env.GEMINI_TIMEOUT_MS ?? 15000) } });
+  const deadline = Date.now() + Number(process.env.EXTRACT_DEADLINE_MS ?? 25000);
   const models = [process.env.GEMINI_MODEL || "gemini-3.8-flash", ...(process.env.GEMINI_FALLBACK_MODELS ?? "").split(",").map((m) => m.trim())].filter(Boolean);
   const contents = [{ role: "user", parts: [{ inlineData: { mimeType, data: buf.toString("base64") } }, { text: `Today is ${new Date().toISOString().slice(0, 10)}. Extract the event.` }] }];
   let lastErr: unknown;
   for (const model of models) {
-    for (let attempt = 0; attempt < 3; attempt++) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (Date.now() > deadline) throw lastErr ?? new Error("Extraction deadline exceeded");
       try {
         const res = await ai.models.generateContent({ model, contents, config: { systemInstruction: SYSTEM, responseMimeType: "application/json", temperature: 0 } });
         const raw = (res.text ?? "").replace(/```json|```/g, "").trim();

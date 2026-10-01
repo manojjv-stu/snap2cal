@@ -50,7 +50,10 @@ export default function App() {
     try {
       const body = new FormData(); body.append("image", await shrink(file));
       const res = await fetch("/api/extract-event", { method: "POST", body });
-      const data = await res.json();
+      let data;
+      try { data = await res.json(); } catch {
+        return fail(res.status === 413 ? "Image is too large. Try a smaller photo." : res.status === 429 ? "Too many requests. Please wait a minute and try again." : res.status === 504 || res.status === 408 ? "The AI took too long to respond. Please try again." : `Server problem (${res.status}). Please try again in a moment.`);
+      }
       if (!data.success) return fail(data.error);
       const r: Raw = data.event;
       setEv({ name: r.event_name ?? "", date: r.start_date ?? "", startTime: r.start_time ?? "", endDate: r.end_date ?? "", endTime: r.end_time ?? "",

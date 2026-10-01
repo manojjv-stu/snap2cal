@@ -10,9 +10,10 @@ const OK = ["image/jpeg", "image/png", "image/webp"];
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024, files: 1 } });
 const fail = (res: express.Response, code: number, error: string) => res.status(code).json({ success: false, error });
 
+app.set("trust proxy", 1);
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL ?? "http://localhost:5173" }));
-app.use("/api", rateLimit({ windowMs: 60_000, limit: 15, standardHeaders: true }));
+app.use(cors({ origin: process.env.VERCEL ? false : (process.env.CLIENT_URL ?? "http://localhost:5173") }));
+app.use("/api", rateLimit({ windowMs: 60_000, limit: 15, standardHeaders: true, message: { success: false, error: "Too many requests. Please wait a minute and try again." } }));
 
 app.post("/api/extract-event", (req, res) => {
   upload.single("image")(req, res, async (err) => {

@@ -15,7 +15,11 @@ app.use(helmet());
 app.use(cors({ origin: process.env.VERCEL ? false : (process.env.CLIENT_URL ?? "http://localhost:5173") }));
 app.use("/api", rateLimit({ windowMs: 60_000, limit: 15, standardHeaders: true, message: { success: false, error: "Too many requests. Please wait a minute and try again." } }));
 
-app.post("/api/extract-event", (req, res) => {
+app.get(["/api/health", "/health"], (_req, res) => {
+  res.json({ ok: true, hasKey: Boolean(process.env.GEMINI_API_KEY?.trim()), demo: process.env.DEMO_MODE === "true", model: process.env.GEMINI_MODEL ?? "default", fallbacks: (process.env.GEMINI_FALLBACK_MODELS ?? "").split(",").filter(Boolean).length });
+});
+
+app.post(["/api/extract-event", "/extract-event"], (req, res) => {
   upload.single("image")(req, res, async (err) => {
     if (err) return fail(res, 400, err.code === "LIMIT_FILE_SIZE" ? "Image is larger than 10 MB." : "Couldn't read the upload.");
     const f = req.file;

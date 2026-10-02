@@ -16,7 +16,7 @@ export async function extractEvent(buf: Buffer, mimeType: string): Promise<Event
   if (process.env.DEMO_MODE === "true") return DEMO;
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY?.trim(), httpOptions: { timeout: Number(process.env.GEMINI_TIMEOUT_MS ?? 15000) } });
   const deadline = Date.now() + Number(process.env.EXTRACT_DEADLINE_MS ?? 25000);
-  const models = [process.env.GEMINI_MODEL?.trim() || "gemini-3.8-flash", ...(process.env.GEMINI_FALLBACK_MODELS ?? "").split(",").map((m) => m.trim())].filter(Boolean);
+  const models = [process.env.GEMINI_MODEL?.trim() || "gemini-3.5-flash", ...(process.env.GEMINI_FALLBACK_MODELS ?? "").split(",").map((m) => m.trim())].filter(Boolean);
   const contents = [{ role: "user", parts: [{ inlineData: { mimeType, data: buf.toString("base64") } }, { text: `Today is ${new Date().toISOString().slice(0, 10)}. Extract the event.` }] }];
   let lastErr: unknown;
   for (const model of models) {

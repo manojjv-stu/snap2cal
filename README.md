@@ -3,7 +3,7 @@
 > **Turn any event poster into a calendar event in seconds.**
 
 Snap2Cal is a web application that reads an event poster with AI and creates a ready-to-save Google Calendar event. Take a photo or upload an image, check the extracted details, and click once to add the event to Google Calendar. No sign-in is required.
-
+**🔗 Try the Demo: https://lnkd.in/gPnd8WdX
 ---
 
 ## Table of Contents
